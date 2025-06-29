@@ -1,11 +1,19 @@
 package com.hiruna.contract.service;
 
+import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.WorkerContractRepository;
+import com.hiruna.contract.data.dto.CustomerNotifDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,15 +21,27 @@ import java.util.Optional;
 public class WorkerContractService {
     private WorkerContractRepository workerContractRepository;
     private CustomerContractService customerContractService;
+    private KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate;
 
-    public WorkerContractService(WorkerContractRepository workerContractRepository, CustomerContractService customerContractService){
+    public WorkerContractService(WorkerContractRepository workerContractRepository, CustomerContractService customerContractService, KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate){
         this.workerContractRepository = workerContractRepository;
         this.customerContractService = customerContractService;
+        this.customerNotifKafkaTemplate = customerNotifKafkaTemplate;
     }
 
     public WorkerContract createWContract(WorkerContract contract){
         if (customerContractService.cusContractExistsById(contract.getCust_contract_id())){
-            return workerContractRepository.save(contract);
+            CustomerContract cus_contract = customerContractService.getCusContractById(contract.getCust_contract_id());
+            WorkerContract c = workerContractRepository.save(contract); //creating the worker contract
+            cus_contract.setRequest_status("Accepted");
+            customerContractService.updateCusContract(cus_contract); //updating to the cus contract status
+
+            //sending notif message to kafka server
+            String formatted_string = String.format("ID: %d\nTitle: %s\nDescription: %s\nStatus: %s", cus_contract.getId(), cus_contract.getTitle(), cus_contract.getDescription(), cus_contract.getRequest_status());
+            CustomerNotifDTO notif = new CustomerNotifDTO(cus_contract.getCustomer_id(),"Your contract has been accepted", formatted_string, Date.valueOf(LocalDate.now()), Time.valueOf(LocalTime.now()));
+            customerNotifKafkaTemplate.send("customer-notification", "ContractAccepted", notif);
+
+            return c;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer Contract not found");
         }
