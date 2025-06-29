@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/worker")
@@ -76,5 +77,13 @@ public class WorkerContractController {
     public ResponseEntity<Boolean> workerContractExistsById(@PathVariable int id){
         Boolean exists = workerContractService.workerContractExistsById(id);
         return ResponseEntity.ok(exists);
+    }
+
+    //cancel endpoint
+    @PatchMapping(path = "/contracts/{id}/status")
+    public ResponseEntity<WorkerContract> cancelWContract(@PathVariable int id, @RequestBody Map<String, String> body){
+        String status = body.get("status");
+        WorkerContract contract = workerContractService.cancelWContract(id, status);
+        return ResponseEntity.ok(contract);
     }
 }
