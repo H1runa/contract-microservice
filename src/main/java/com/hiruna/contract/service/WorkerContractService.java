@@ -4,7 +4,6 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.WorkerContractRepository;
 import com.hiruna.contract.data.dto.CustomerNotifDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -65,8 +64,8 @@ public class WorkerContractService {
         }
     }
 
-    public List<WorkerContract> getWContractsByCusContractId(int id){
-        return workerContractRepository.getWContractsByCusContractId(id);
+    public List<WorkerContract> getWContractsByCusContractIdAndStatus(int id, String status){
+        return workerContractRepository.getWContractsByCusContractIdAndStatus(id, status);
     }
 
     public List<WorkerContract> getWContractsByWorkerId(int id){

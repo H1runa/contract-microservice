@@ -8,8 +8,8 @@ import java.util.List;
 
 @Repository
 public interface WorkerContractRepository extends JpaRepository<WorkerContract, Integer> {
-    @Query("select wc from WorkerContract wc where wc.cust_contract_id = ?1")
-    public List<WorkerContract> getWContractsByCusContractId(int id);
+    @Query("select wc from WorkerContract wc where wc.cust_contract_id = ?1 AND wc.job_status = ?2")
+    public List<WorkerContract> getWContractsByCusContractIdAndStatus(int id, String status);
 
     @Query("select wc from WorkerContract wc where wc.worker_id = ?1")
     public List<WorkerContract> getWContractsByWorkerId(int id);

@@ -39,9 +39,9 @@ public class WorkerContractController {
     }
 
     //get worker contract by customer contract id
-    @GetMapping(path = "/contracts", params = {"cusContractId"})
-    public ResponseEntity<List<WorkerContract>> getWContractsByCusContractId(@RequestParam int cusContractId){
-        List<WorkerContract> contracts = workerContractService.getWContractsByCusContractId(cusContractId);
+    @GetMapping(path = "/contracts", params = {"cusContractId", "status"})
+    public ResponseEntity<List<WorkerContract>> getWContractsByCusContractId(@RequestParam int cusContractId, @RequestParam String status){
+        List<WorkerContract> contracts = workerContractService.getWContractsByCusContractIdAndStatus(cusContractId, status);
         return ResponseEntity.ok(contracts);
     }
 

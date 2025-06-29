@@ -4,11 +4,10 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.CustomerContractRepository;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.WorkerContractRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -31,7 +30,7 @@ public class ServiceCoordinator {
         if (contract.isPresent()){
             return contract.get();
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request Customer Contract was not found");
+            throw new NoSuchElementException("Customer Contract not found");
         }
     }
 
@@ -40,8 +39,8 @@ public class ServiceCoordinator {
     }
 
     //worker contract services
-    public List<WorkerContract> getWContractsByCusContractId(int id){
-        return workerContractRepository.getWContractsByCusContractId(id);
+    public List<WorkerContract> getWContractsByCusContractIdAndStatus(int id, String status){
+        return workerContractRepository.getWContractsByCusContractIdAndStatus(id, status);
     }
 
     public WorkerContract updateWContract(WorkerContract contract){

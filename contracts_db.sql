@@ -33,7 +33,7 @@ CREATE TABLE `customer_contract` (
   `customer_id` int DEFAULT NULL,
   `request_status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `customer_contract` (
 
 LOCK TABLES `customer_contract` WRITE;
 /*!40000 ALTER TABLE `customer_contract` DISABLE KEYS */;
-INSERT INTO `customer_contract` VALUES (1,'Cleaning needed','Clean the house. There\'s  a lot of cleaning to do','189/A','Siyane School rd','Dompe',1,2,'Pending'),(3,'Porfessional Wrestler needed','For personal entertainment. Good pay guranteed','189/A','Siyane School rd','Dompe',4,5,'Accepted');
+INSERT INTO `customer_contract` VALUES (1,'Cleaning needed','Just some light cleaning for good pay','Siayne school rd','Palugama','Domp[e',1,1,'Pending'),(3,'Porfessional Wrestler needed','For personal entertainment. Good pay guranteed','189/A','Siyane School rd','Dompe',4,5,'Cancelled'),(4,'Lawn Mowing','Mow the lawn please','Siayne school rd','Palugama','Domp[e',2,2,'Cancelled');
 /*!40000 ALTER TABLE `customer_contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +59,7 @@ CREATE TABLE `worker_contract` (
   `worker_id` varchar(255) DEFAULT NULL,
   `job_status` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +68,7 @@ CREATE TABLE `worker_contract` (
 
 LOCK TABLES `worker_contract` WRITE;
 /*!40000 ALTER TABLE `worker_contract` DISABLE KEYS */;
-INSERT INTO `worker_contract` VALUES (1,'1','1','completed');
+INSERT INTO `worker_contract` VALUES (1,'1','1','Cancelled'),(3,'3','3','Cancelled'),(4,'4','14','Cancelled'),(5,'4','2','Cancelled'),(6,'3','12','Cancelled'),(7,'3','12','Cancelled');
 /*!40000 ALTER TABLE `worker_contract` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -81,4 +81,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-29 14:44:06
+-- Dump completed on 2025-06-30  3:43:14

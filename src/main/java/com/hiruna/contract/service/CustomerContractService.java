@@ -90,7 +90,7 @@ public class CustomerContractService {
         cusContractRepo.save(cus_contract);
 
         //updating worker contracts if there is nay
-        List<WorkerContract> worker_contracts = serviceCoord.getWContractsByCusContractId(cus_contract.getId());
+        List<WorkerContract> worker_contracts = serviceCoord.getWContractsByCusContractIdAndStatus(cus_contract.getId(), "Accepted");
         if (!worker_contracts.isEmpty()){
             for (WorkerContract c : worker_contracts){
                 c.setJob_status("Cancelled");
