@@ -4,6 +4,8 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.CustomerContractRepository;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.dto.WorkerNotifDTO;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Service
 public class CustomerContractService {
+    private static final Log log = LogFactory.getLog(CustomerContractService.class);
     private CustomerContractRepository cusContractRepo;
     private ServiceCoordinator serviceCoord;
     private KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate;
@@ -99,7 +102,12 @@ public class CustomerContractService {
                 //sending the kafka notification message
                 String formatted_string = String.format("\"%s\" contract has been cancelled by the customer.", cus_contract.getTitle());
                 WorkerNotifDTO notif = new WorkerNotifDTO(null, c.getWorker_id(), cus_contract.getCustomer_id(), c.getId(), cus_contract.getId(), "Contract cancelled", formatted_string, Date.valueOf(LocalDate.now()), Time.valueOf(LocalTime.now()), "Unread");
-                workerNotifKafkaTemplate.send("worker-notification", "ContractCancelled", notif);
+                try{
+                    workerNotifKafkaTemplate.send("worker-notification", "ContractCancelled", notif);
+                } catch (Exception e){
+                    log.warn("Kafka message could not be sent");
+                }
+
             }
         }
 

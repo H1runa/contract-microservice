@@ -4,6 +4,8 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.WorkerContractRepository;
 import com.hiruna.contract.data.dto.CustomerNotifDTO;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Service
 public class WorkerContractService {
+    private static final Log log = LogFactory.getLog(WorkerContractService.class);
     private WorkerContractRepository workerContractRepository;
     private ServiceCoordinator serviceCoord;
     private KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate;
@@ -42,7 +45,12 @@ public class WorkerContractService {
             //sending notif message to kafka server
             String formatted_string = String.format("Your contract, \"%s\" has been accepted by a worker", cus_contract.getTitle());
             CustomerNotifDTO notif = new CustomerNotifDTO(null, cus_contract.getCustomer_id(), c.getWorker_id(), cus_contract.getId(), c.getId(), "Your contract has been accepted", formatted_string, Date.valueOf(LocalDate.now()), Time.valueOf(LocalTime.now()), "Unread");
-            customerNotifKafkaTemplate.send("customer-notification", "ContractAccepted", notif);
+            try{
+                customerNotifKafkaTemplate.send("customer-notification", "ContractAccepted", notif);
+            } catch (Exception e){
+                log.warn("Kafka message could not be sent");
+            }
+
 
             return c;
         } else {
@@ -108,7 +116,12 @@ public class WorkerContractService {
         //sending kafka notification message
         String formatted_string = String.format("Your contract, \"%s\" has been cancelled by the assigned worker. Contact the worker for furthur details.", cus_contract.getTitle());
         CustomerNotifDTO notif = new CustomerNotifDTO(null,  cus_contract.getCustomer_id(), updated_contract.getWorker_id(),cus_contract.getId(), updated_contract.getId(), "Your contract was cancelled", formatted_string, Date.valueOf(LocalDate.now()), Time.valueOf(LocalTime.now()),"Unread");
-        customerNotifKafkaTemplate.send("customer-notification", "ContractCancelled", notif);
+        try{
+            customerNotifKafkaTemplate.send("customer-notification", "ContractCancelled", notif);
+        } catch (Exception e) {
+            log.warn("Kafka message could not be sent");
+        }
+
 
         return updated_contract;
     }
