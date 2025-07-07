@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 public class CustomerContractController {
     private CustomerContractService cusContractServ;
 
@@ -99,5 +99,11 @@ public class CustomerContractController {
         String status = body.get("status");
         CustomerContract contract = cusContractServ.cancelContract(id, status);
         return ResponseEntity.ok(contract);
+    }
+
+    //cancel contracts for deleted user
+    @PatchMapping(path = "/{id}/contracts/status")
+    public void cancelContractsForDeletedUser(@PathVariable int id){
+        cusContractServ.cancelContractsForDeletedUser(id);
     }
 }

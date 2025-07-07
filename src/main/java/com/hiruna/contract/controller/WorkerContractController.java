@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/worker")
+@RequestMapping("/workers")
 public class WorkerContractController {
     private WorkerContractService workerContractService;
 

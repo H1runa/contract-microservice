@@ -23,4 +23,7 @@ public interface CustomerContractRepository extends JpaRepository<CustomerContra
     @Query("select cc from CustomerContract cc where cc.request_status = ?1")
     public List<CustomerContract> findByStatus(String status);
 
+    @Query("select cc from CustomerContract cc where cc.customer_id = ?1 AND cc.request_status != 'Cancelled'")
+    public List<CustomerContract> findActiveContractsForCustomer(int id);
+
 }
