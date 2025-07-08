@@ -119,6 +119,8 @@ public class CustomerContractService {
         if (contracts.isEmpty()) {
             return;
         }
+
+        contracts.forEach(contract -> cancelContract(contract.getId(), "Cancelled"));
     }
 
     //Code added by Desan
