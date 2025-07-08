@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/customer")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CustomerContractController {
     private CustomerContractService cusContractServ;
 
@@ -103,7 +104,22 @@ public class CustomerContractController {
 
     //cancel contracts for deleted user
     @PatchMapping(path = "/{id}/contracts/status")
-    public void cancelContractsForDeletedUser(@PathVariable int id){
+    public void cancelContractsForDeletedUser(@PathVariable int id) {
         cusContractServ.cancelContractsForDeletedUser(id);
+    }
+
+    //Code added by Desan
+
+    //get customer contracts by keyword
+    @GetMapping(path = "/contracts", params = {"keyword"})
+    public ResponseEntity<List<CustomerContract>> findByKeyword(@RequestParam String keyword){
+        List<CustomerContract> contracts = cusContractServ.findByKeyword(keyword);
+        return ResponseEntity.ok(contracts);
+    }
+
+    @GetMapping(path = "/contracts", params = {"status","id"})
+    public ResponseEntity<List<CustomerContract>> getByStatus(@RequestParam String status, @RequestParam int id){
+        List<CustomerContract> contracts = cusContractServ.getByStatus(status,id);
+        return ResponseEntity.ok(contracts);
     }
 }

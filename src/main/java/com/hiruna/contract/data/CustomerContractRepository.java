@@ -14,7 +14,7 @@ public interface CustomerContractRepository extends JpaRepository<CustomerContra
     @Query("select cc from CustomerContract cc where cc.description LIKE %?1%")
     public List<CustomerContract> findByDesc(String desc);
 
-    @Query("select cc from CustomerContract cc where cc.service_id = ?1")
+    @Query("select cc from CustomerContract cc where cc.service_id = ?1 AND cc.request_status='Pending' ")
     public List<CustomerContract> findByServID(int id);
 
     @Query("select cc from CustomerContract cc where cc.customer_id = ?1")
@@ -26,4 +26,11 @@ public interface CustomerContractRepository extends JpaRepository<CustomerContra
     @Query("select cc from CustomerContract cc where cc.customer_id = ?1 AND cc.request_status != 'Cancelled'")
     public List<CustomerContract> findActiveContractsForCustomer(int id);
 
+
+    //code added by Desan
+    @Query("select cc from CustomerContract cc where (cc.description LIKE %?1% or cc.title LIKE %?1% or cc.addr_line_3 LIKE %?1%) and cc.request_status = 'Pending'")
+    public List<CustomerContract> findByKeyword(String keyword);
+
+    @Query("select cc from CustomerContract cc where cc.request_status = ?1 and cc.customer_id = ?2")
+    public List<CustomerContract> getByStatus(String status,int id);
 }
