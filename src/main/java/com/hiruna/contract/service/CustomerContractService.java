@@ -92,7 +92,7 @@ public class CustomerContractService {
         cus_contract.setRequest_status("Cancelled");
         cusContractRepo.save(cus_contract);
 
-        //updating worker contracts if there is any
+        //updating worker contracts if there is nay
         List<WorkerContract> worker_contracts = serviceCoord.getWContractsByCusContractIdAndStatus(cus_contract.getId(), "Accepted");
         if (!worker_contracts.isEmpty()){
             for (WorkerContract c : worker_contracts){
@@ -113,14 +113,20 @@ public class CustomerContractService {
 
         return cus_contract;
     }
-
-    public void cancelContractsForDeletedUser(int id){
+    public void cancelContractsForDeletedUser(int id) {
         List<CustomerContract> contracts = cusContractRepo.findActiveContractsForCustomer(id);
 
-        if (contracts.isEmpty()){
+        if (contracts.isEmpty()) {
             return;
         }
+    }
 
-        contracts.forEach(contract -> cancelContract(contract.getId(), "Cancelled"));
+    //Code added by Desan
+    public List<CustomerContract> findByKeyword(String keyword){
+        return cusContractRepo.findByKeyword(keyword);
+    }
+
+    public List<CustomerContract> getByStatus(String status, int id){
+        return cusContractRepo.getByStatus(status,id);
     }
 }
