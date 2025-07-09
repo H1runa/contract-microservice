@@ -87,4 +87,10 @@ public class WorkerContractController {
         WorkerContract contract = workerContractService.cancelWContract(id, status);
         return ResponseEntity.ok(contract);
     }
+
+    //cancel contracts for deleted workers endpoint
+    @PatchMapping(path = "/{id}/contracts/status")
+    public void cancelWContractsForDeletedWorker(@PathVariable int id){
+        workerContractService.cancelWContractsForDeletedWorker(id);
+    }
 }

@@ -125,4 +125,15 @@ public class WorkerContractService {
 
         return updated_contract;
     }
+
+    //cancelling worker contracts for a deleted worker
+    public void cancelWContractsForDeletedWorker(int id){
+        List<WorkerContract> contracts = workerContractRepository.getActiveWContractsForWorker(id);
+
+        if (contracts.isEmpty()){
+            return;
+        }
+
+        contracts.forEach(contract -> cancelWContract(contract.getId(), "Cancelled"));
+    }
 }

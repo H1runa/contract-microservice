@@ -16,4 +16,7 @@ public interface WorkerContractRepository extends JpaRepository<WorkerContract, 
 
     @Query("select wc from WorkerContract wc where wc.job_status = ?1")
     public List<WorkerContract> getWContractByStatus(String status);
+
+    @Query("select wc from WorkerContract wc where wc.worker_id = ?1 AND wc.job_status != 'Completed' AND wc.job_status != 'Cancelled'")
+    public List<WorkerContract> getActiveWContractsForWorker(int id);
 }
