@@ -5,6 +5,7 @@ import com.hiruna.contract.data.CustomerContractRepository;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.dto.WorkerNotifDTO;
 import com.hiruna.contract.service.interservice.CustomerService;
+import com.hiruna.contract.service.interservice.ServiceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -26,20 +27,24 @@ public class CustomerContractService {
     private ServiceCoordinator serviceCoord;
     private KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate;
     private CustomerService customerService;
+    private ServiceService servService;
 
-    public CustomerContractService(CustomerContractRepository cusContractRepo, ServiceCoordinator serviceCoord, KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate, CustomerService customerService){
+    public CustomerContractService(CustomerContractRepository cusContractRepo, ServiceCoordinator serviceCoord, KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate, CustomerService customerService, ServiceService servService){
         this.cusContractRepo = cusContractRepo;
         this.serviceCoord=serviceCoord;
         this.workerNotifKafkaTemplate=workerNotifKafkaTemplate;
         this.customerService=customerService;
+        this.servService=servService;
     }
 
     public CustomerContract createCusContract(CustomerContract cc){
-        if (customerService.customerExists(cc.getCustomer_id())){ //checking to see if the customer exists for this contract
-            return cusContractRepo.save(cc);
-        } else {
+        if (!customerService.customerExists(cc.getCustomer_id())) { //checking to see if the customer exists for this contract
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer was not found");
         }
+        if (!servService.ServiceExists(cc.getService_id())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Service category was not found");
+        }
+        return cusContractRepo.save(cc);
     }
 
     public CustomerContract getCusContractById(int id){
@@ -76,11 +81,13 @@ public class CustomerContractService {
     }
 
     public CustomerContract updateCusContract(CustomerContract contract){
-        if (customerService.customerExists(contract.getCustomer_id())){
-            return cusContractRepo.save(contract);
-        } else {
+        if (!customerService.customerExists(contract.getCustomer_id())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer was not found");
         }
+        if (!servService.ServiceExists(contract.getService_id())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Service category was not found");
+        }
+        return cusContractRepo.save(contract);
     }
 
     public void deleteCusContract(int id){
