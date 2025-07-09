@@ -4,6 +4,7 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.WorkerContractRepository;
 import com.hiruna.contract.data.dto.CustomerNotifDTO;
+import com.hiruna.contract.service.interservice.WorkerService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,13 @@ public class WorkerContractService {
     private WorkerContractRepository workerContractRepository;
     private ServiceCoordinator serviceCoord;
     private KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate;
+    private WorkerService workerService;
 
-    public WorkerContractService(WorkerContractRepository workerContractRepository, ServiceCoordinator serviceCoord, KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate){
+    public WorkerContractService(WorkerContractRepository workerContractRepository, ServiceCoordinator serviceCoord, KafkaTemplate<String, CustomerNotifDTO> customerNotifKafkaTemplate, WorkerService workerService){
         this.workerContractRepository = workerContractRepository;
         this.serviceCoord=serviceCoord;
         this.customerNotifKafkaTemplate = customerNotifKafkaTemplate;
+        this.workerService=workerService;
     }
 
     public WorkerContract createWContract(WorkerContract contract){
@@ -37,6 +40,10 @@ public class WorkerContractService {
             //making sure the customer contract is still available from the server side
             if (!cus_contract.getRequest_status().equals("Pending")){
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Customer Contract not available");
+            }
+            //checking to see if the worker exists
+            if (!workerService.WokrerExists(contract.getWorker_id())){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Worker was not found");
             }
             WorkerContract c = workerContractRepository.save(contract); //creating the worker contract
             cus_contract.setRequest_status("Accepted");
@@ -85,15 +92,17 @@ public class WorkerContractService {
     }
 
     public WorkerContract updateWContract(WorkerContract contract){
+        if (!serviceCoord.cusContractExistsById(contract.getCust_contract_id())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer contract not available");
+        }
+        if (!workerService.WokrerExists(contract.getWorker_id())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Worker was not found");
+        }
         return workerContractRepository.save(contract);
     }
 
     public void deleteWContract(int id){
         workerContractRepository.deleteById(id);
-    }
-
-    public Boolean workerContractExistsById(int id){
-        return workerContractRepository.existsById(id);
     }
 
     //cancelling worker contracts

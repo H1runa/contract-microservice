@@ -87,13 +87,6 @@ public class CustomerContractController {
         cusContractServ.deleteCusContract(id);
     }
 
-    //exists endpoint
-    @GetMapping(path = "/contracts/{id}/exists")
-    public ResponseEntity<Boolean> cusContractExistsById(@PathVariable int id){
-        Boolean exists = cusContractServ.cusContractExistsById(id);
-        return ResponseEntity.ok(exists);
-    }
-
     //cancel contract endpoint
     @PatchMapping(path = "/contracts/{id}/status")
     public ResponseEntity<CustomerContract> cancelContract(@PathVariable int id, @RequestBody Map<String, String> body){

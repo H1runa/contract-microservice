@@ -73,13 +73,6 @@ public class WorkerContractController {
         workerContractService.deleteWContract(id);
     }
 
-    //exists endpoint
-    @GetMapping(path = "/contracts/{id}/exists")
-    public ResponseEntity<Boolean> workerContractExistsById(@PathVariable int id){
-        Boolean exists = workerContractService.workerContractExistsById(id);
-        return ResponseEntity.ok(exists);
-    }
-
     //cancel endpoint
     @PatchMapping(path = "/contracts/{id}/status")
     public ResponseEntity<WorkerContract> cancelWContract(@PathVariable int id, @RequestBody Map<String, String> body){

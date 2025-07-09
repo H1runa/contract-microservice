@@ -4,6 +4,7 @@ import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.data.CustomerContractRepository;
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.data.dto.WorkerNotifDTO;
+import com.hiruna.contract.service.interservice.CustomerService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,21 @@ public class CustomerContractService {
     private CustomerContractRepository cusContractRepo;
     private ServiceCoordinator serviceCoord;
     private KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate;
+    private CustomerService customerService;
 
-    public CustomerContractService(CustomerContractRepository cusContractRepo, ServiceCoordinator serviceCoord, KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate){
+    public CustomerContractService(CustomerContractRepository cusContractRepo, ServiceCoordinator serviceCoord, KafkaTemplate<String, WorkerNotifDTO> workerNotifKafkaTemplate, CustomerService customerService){
         this.cusContractRepo = cusContractRepo;
         this.serviceCoord=serviceCoord;
         this.workerNotifKafkaTemplate=workerNotifKafkaTemplate;
+        this.customerService=customerService;
     }
 
     public CustomerContract createCusContract(CustomerContract cc){
-        return cusContractRepo.save(cc);
+        if (customerService.customerExists(cc.getCustomer_id())){ //checking to see if the customer exists for this contract
+            return cusContractRepo.save(cc);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer was not found");
+        }
     }
 
     public CustomerContract getCusContractById(int id){
@@ -69,15 +76,15 @@ public class CustomerContractService {
     }
 
     public CustomerContract updateCusContract(CustomerContract contract){
-        return cusContractRepo.save(contract);
+        if (customerService.customerExists(contract.getCustomer_id())){
+            return cusContractRepo.save(contract);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer was not found");
+        }
     }
 
     public void deleteCusContract(int id){
         cusContractRepo.deleteById(id);
-    }
-
-    public Boolean cusContractExistsById(int id){
-        return cusContractRepo.existsById(id);
     }
 
     public CustomerContract cancelContract(int id, String status){
