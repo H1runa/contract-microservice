@@ -1,5 +1,6 @@
 package com.hiruna.contract.service.interservice;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,8 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class WorkerService {
     private WebClient webCLient;
 
-    public WorkerService(WebClient.Builder builder){
-        this.webCLient=builder.baseUrl("http://localhost:8087/worker-app").build();
+    public WorkerService(WebClient.Builder builder, @Value("${service.worker.url}") String url){
+        this.webCLient=builder.baseUrl(url).build();
     }
 
     public Boolean WokrerExists(int id){

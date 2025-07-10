@@ -1,5 +1,6 @@
 package com.hiruna.contract.service.interservice;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -8,8 +9,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class ServiceService {
     private WebClient webCLient;
 
-    public ServiceService(WebClient.Builder builder){
-        this.webCLient=builder.baseUrl("http://localhost:8088/ServiceManagement-EAD").build();
+    public ServiceService(WebClient.Builder builder, @Value("${service.service.url}") String url){
+        this.webCLient=builder.baseUrl(url).build();
     }
 
     public Boolean ServiceExists(int id){
