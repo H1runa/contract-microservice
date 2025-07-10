@@ -2,6 +2,7 @@ package com.hiruna.contract.controller;
 
 import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.service.CustomerContractService;
+import com.hiruna.contract.service.ServiceCoordinator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class CustomerContractController {
     private CustomerContractService cusContractServ;
+    private ServiceCoordinator serviceCoordinator;
 
-    public CustomerContractController(CustomerContractService cusContractServ){
+    public CustomerContractController(CustomerContractService cusContractServ, ServiceCoordinator serviceCoordinator){
         this.cusContractServ=cusContractServ;
+        this.serviceCoordinator=serviceCoordinator;
     }
 
     //create customer contract
@@ -114,5 +117,15 @@ public class CustomerContractController {
     public ResponseEntity<List<CustomerContract>> getByStatus(@RequestParam String status, @RequestParam int id){
         List<CustomerContract> contracts = cusContractServ.getByStatus(status,id);
         return ResponseEntity.ok(contracts);
+    }
+
+    //get customer contract existence
+    @RequestMapping(method = RequestMethod.HEAD, path = "/contracts/{id}")
+    public ResponseEntity<Void> getCusContractExistsById(@PathVariable int id){
+        if (serviceCoordinator.cusContractExistsById(id)){
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
