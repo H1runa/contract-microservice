@@ -94,7 +94,7 @@ public class CustomerContractService {
         cusContractRepo.deleteById(id);
     }
 
-    public CustomerContract cancelContract(int id, String status){
+    public CustomerContract cancelContract(int id){
         Optional<CustomerContract> contract = cusContractRepo.findById(id);
         //checking for existence
         if (contract.isEmpty()){
@@ -134,7 +134,7 @@ public class CustomerContractService {
             return;
         }
 
-        contracts.forEach(contract -> cancelContract(contract.getId(), "Cancelled"));
+        contracts.forEach(contract -> cancelContract(contract.getId()));
     }
 
     //Code added by Desan

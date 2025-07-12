@@ -106,7 +106,7 @@ public class WorkerContractService {
     }
 
     //cancelling worker contracts
-    public WorkerContract cancelWContract(int id, String status){
+    public WorkerContract cancelWContract(int id){
         Optional<WorkerContract> optional_contract = workerContractRepository.findById(id);
         //checking to see if the worker contract exists
         if (optional_contract.isEmpty()){
@@ -143,6 +143,6 @@ public class WorkerContractService {
             return;
         }
 
-        contracts.forEach(contract -> cancelWContract(contract.getId(), "Cancelled"));
+        contracts.forEach(contract -> cancelWContract(contract.getId()));
     }
 }

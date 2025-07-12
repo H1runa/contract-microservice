@@ -3,8 +3,10 @@ package com.hiruna.contract.controller;
 import com.hiruna.contract.data.CustomerContract;
 import com.hiruna.contract.service.CustomerContractService;
 import com.hiruna.contract.service.ServiceCoordinator;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -92,10 +94,18 @@ public class CustomerContractController {
 
     //cancel contract endpoint
     @PatchMapping(path = "/contracts/{id}/status")
-    public ResponseEntity<CustomerContract> cancelContract(@PathVariable int id, @RequestBody Map<String, String> body){
+    public ResponseEntity<CustomerContract> updateCusContractStatus(@PathVariable int id, @RequestBody Map<String, String> body){
         String status = body.get("status");
-        CustomerContract contract = cusContractServ.cancelContract(id, status);
-        return ResponseEntity.ok(contract);
+        switch (status) {
+            case "Cancelled":
+                CustomerContract contract = cusContractServ.cancelContract(id);
+                return ResponseEntity.ok(contract);
+
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Method not defined");
+        }
+
+
     }
 
     //cancel contracts for deleted user

@@ -2,8 +2,10 @@ package com.hiruna.contract.controller;
 
 import com.hiruna.contract.data.WorkerContract;
 import com.hiruna.contract.service.WorkerContractService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -75,10 +77,15 @@ public class WorkerContractController {
 
     //cancel endpoint
     @PatchMapping(path = "/contracts/{id}/status")
-    public ResponseEntity<WorkerContract> cancelWContract(@PathVariable int id, @RequestBody Map<String, String> body){
+    public ResponseEntity<WorkerContract> updateWContractStatus(@PathVariable int id, @RequestBody Map<String, String> body){
         String status = body.get("status");
-        WorkerContract contract = workerContractService.cancelWContract(id, status);
-        return ResponseEntity.ok(contract);
+        switch(status){
+            case "Cancelled":
+                WorkerContract contract = workerContractService.cancelWContract(id);
+                return ResponseEntity.ok(contract);
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Method not defined");
+        }
     }
 
     //cancel contracts for deleted workers endpoint
